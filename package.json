@@ -1,17 +1,17 @@
 {
-  "name": "name",
+  "name": "un-git",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "[description]",
   "author": "Chris <https://github.com/zyyv>",
   "license": "MIT",
-  "homepage": "https://github.com/zyyv/[name]#readme",
+  "homepage": "https://github.com/zyyv/un-git#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zyyv/[name].git"
+    "url": "git+https://github.com/zyyv/un-git.git"
   },
   "bugs": {
-    "url": "https://github.com/zyyv/[name]/issues"
+    "url": "https://github.com/zyyv/un-git/issues"
   },
   "keywords": [],
   "sideEffects": false,
