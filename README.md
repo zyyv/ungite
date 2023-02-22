@@ -33,7 +33,7 @@ pnpm dev
 When you use this template, try follow the checklist to update your info properly
 
 - [ ] Update the package.json
-- [ ] ReplaceAll `[name]` to your project name
+- [ ] ReplaceAll `ungite` to your project name
 - [ ] Change the author name in `LICENSE`
 
 And, enjoy :)

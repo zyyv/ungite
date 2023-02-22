@@ -1,17 +1,17 @@
 {
-  "name": "un-git",
+  "name": "ungite",
   "type": "module",
   "version": "0.0.1",
   "description": "[description]",
   "author": "Chris <https://github.com/zyyv>",
   "license": "MIT",
-  "homepage": "https://github.com/zyyv/un-git#readme",
+  "homepage": "https://github.com/zyyv/ungite#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zyyv/un-git.git"
+    "url": "git+https://github.com/zyyv/ungite.git"
   },
   "bugs": {
-    "url": "https://github.com/zyyv/un-git/issues"
+    "url": "https://github.com/zyyv/ungite/issues"
   },
   "keywords": [],
   "sideEffects": false,
