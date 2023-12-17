@@ -1,8 +1,8 @@
+import process from 'node:process'
 import consola from 'consola'
 import cac from 'cac'
 import { version } from '../package.json'
-import { ui, branchUI } from './ui'
-
+import { branchUI } from './ui'
 
 startCli().catch(consola.error)
 
@@ -13,9 +13,12 @@ async function startCli(cwd = process.cwd()) {
 
   cli.command('b', 'List of branchs')
     .option('-r, --remote', 'Include remote branchs')
-    .action((options) => {
-      consola.log(options)
-      branchUI(cwd)
+    .option('-f, --filter <filter>', 'Filter branchs by name')
+    .action(({ remote, filter }) => {
+      branchUI({
+        remote,
+        filter,
+      })
     })
 
   cli.help()
