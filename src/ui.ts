@@ -87,8 +87,14 @@ export async function branchUI(options: BranchUIOptions) {
           return process.exit(0)
         }
 
-        if (deleteConfirm)
-          await $`git branch -D ${aimBranch}`
+        if (deleteConfirm) {
+          const isLocalBranch = branchMeta[2] === 'local'
+          if (isLocalBranch)
+            await $`git branch -d ${aimBranch}`
+
+          else
+            await $`git push ${branchMeta[1]} --delete ${branchMeta[0]}`
+        }
 
         return process.exit(0)
       }
