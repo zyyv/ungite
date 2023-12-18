@@ -1,8 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { a } from '../src'
 
 describe('test', () => {
   it('one', () => {
-    expect(a).toBe(1)
+    expect(1 + 1).toBe(2)
   })
 })

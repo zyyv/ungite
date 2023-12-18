@@ -60,7 +60,9 @@ export async function branchUI(options: BranchUIOptions) {
     branchMeta[1] = branchMeta[1] === 'local' ? '' : branchMeta[1]
     branchMeta[2] = branchMeta[2] === 'local' ? '' : branchMeta[2]
     const aimBranch = branchMeta.filter(Boolean).reverse().join('/')
-    if (options.switch) { await $`git checkout ${aimBranch}` }
+    if (options.switch) {
+      await $`git checkout ${aimBranch}`
+    }
     else {
       const operation = await select({
         message: `How do you want to operate the ${chalk.red(aimBranch)} branch?`,
@@ -75,7 +77,9 @@ export async function branchUI(options: BranchUIOptions) {
         return process.exit(0)
       }
 
-      if (operation === 'switch') { await $`git checkout ${aimBranch}` }
+      if (operation === 'switch') {
+        await $`git checkout ${aimBranch}`
+      }
       else if (operation === 'delete') {
         const deleteConfirm = await confirm({
           message: `Delete branch ${aimBranch}?`,
