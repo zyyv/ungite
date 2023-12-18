@@ -1,43 +1,35 @@
-<h1 align="center">starter-ts</h1>
-<p align="center">Build your ts project quickly</p>
+# ungite [![npm](https://img.shields.io/npm/v/ungite)](https://npmjs.com/package/ungite)
+
+Git management Viewable.
+
+## Features
+- 🔥 Simple operation git flow.
 
 ## Usage
 ```shell
-degit zyyv/starter-ts <Project name>
+pnpm i -g ungite
 ```
 
 ```shell
-code <Project name>
+ungite -h
 ```
 
-Then
+### Branch
+
+列出所有本地分支：
 
 ```shell
-pnpm i
-```
-Run
-```shell
-pnpm dev
+ungite b
 ```
 
-## Try it now!
+![ungite b](./public/branch-list.png)
 
-> Starter-ts requires Node >=14
-
-### GitHub Template
-
-[Create a repo from this template on GitHub](https://github.com/zyyv/starter-ts/generate).
-
-## Checklist
-
-When you use this template, try follow the checklist to update your info properly
-
-- [ ] Update the package.json
-- [ ] ReplaceAll `ungite` to your project name
-- [ ] Change the author name in `LICENSE`
-
-And, enjoy :)
+#### Options
+- 列出所有分支
+- `-r` 列出所有分支 (包括远程分支)
+- `-s` 切换目标分支
+- `-d` 删除目标分支 (支持多选)
 
 ## License
 
-[MIT](./LICENSE) License © 2022 [zyyv](https://github.com/zyyv)
+[MIT](./LICENSE) License © 2023 [zyyv](https://github.com/zyyv)
