@@ -1,7 +1,7 @@
 import process from 'node:process'
 import { log } from 'node:console'
-import { cancel, isCancel, multiselect } from '@clack/prompts'
-import { chalk } from 'zx'
+import { cancel, confirm, isCancel, multiselect, select } from '@clack/prompts'
+import { $, chalk } from 'zx'
 import { getAllBranches } from './utils'
 
 interface BranchUIOptions {
@@ -51,8 +51,50 @@ export async function branchUI(options: BranchUIOptions) {
     return process.exit(0)
   }
 
-  if (result.length === 0)
+  const realResult = result.filter(i => !i[0].startsWith('* '))
+
+  if (realResult.length === 0)
     return process.exit(0)
+
+  if (realResult.length === 1) {
+    const branchMeta = realResult[0]
+    branchMeta[1] = branchMeta[1] === 'local' ? '' : branchMeta[1]
+    branchMeta[2] = branchMeta[2] === 'local' ? '' : branchMeta[2]
+    const aimBranch = branchMeta.filter(Boolean).reverse().join('/')
+    if (options.switch) { await $`git checkout ${aimBranch}` }
+    else {
+      const operation = await select({
+        message: `How do you want to operate the ${chalk.red(aimBranch)} branch?`,
+        options: [
+          { value: 'switch', label: 'Switch' },
+          { value: 'delete', label: 'Delete', hint: '⚠️ Danger, please pay attention to your operation!' },
+        ],
+      })
+
+      if (isCancel(operation)) {
+        cancel('Ungite Operation cancelled.')
+        return process.exit(0)
+      }
+
+      if (operation === 'switch') { await $`git checkout ${aimBranch}` }
+      else if (operation === 'delete') {
+        const deleteConfirm = await confirm({
+          message: `Delete branch ${aimBranch}?`,
+          initialValue: true,
+        })
+
+        if (isCancel(deleteConfirm)) {
+          cancel('Ungite Operation cancelled.')
+          return process.exit(0)
+        }
+
+        if (deleteConfirm)
+          await $`git branch -D ${aimBranch}`
+
+        return process.exit(0)
+      }
+    }
+  }
 
   log('result: ', result)
 }
