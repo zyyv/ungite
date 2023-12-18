@@ -1,5 +1,4 @@
 import process from 'node:process'
-import { log } from 'node:console'
 import { cancel, confirm, isCancel, multiselect, select } from '@clack/prompts'
 import { $, chalk } from 'zx'
 import { getAllBranches } from './utils'
@@ -95,6 +94,4 @@ export async function branchUI(options: BranchUIOptions) {
       }
     }
   }
-
-  log('result: ', result)
 }
