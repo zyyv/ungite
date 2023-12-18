@@ -1,4 +1,5 @@
 import process from 'node:process'
+import { log } from 'node:console'
 import { $ } from 'zx'
 import type { branchTypes } from './types'
 
@@ -9,6 +10,7 @@ export async function getAllBranches(remote = false) {
     })
 
     child.stdout.on('data', (data) => {
+      log(data.toString().trim().split('\n'))
       const branches = data.toString().trim().split('\n')
         .map((i: string) => {
           i = i.slice(1, -1)
