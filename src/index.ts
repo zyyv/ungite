@@ -14,10 +14,16 @@ async function startCli(cwd = process.cwd()) {
   cli.command('b', 'List of branchs')
     .option('-r, --remote', 'Include remote branchs')
     .option('-f, --filter <filter>', 'Filter branchs by name')
-    .action(({ remote, filter }) => {
+    .option('-del, --delete', 'Delete branchs')
+    .option('-s, --switch', 'Switch branchs')
+    .action((opt) => {
+      const { remote, filter, delete: del, switch: sw } = opt
       branchUI({
+        cwd,
         remote,
         filter,
+        delete: del,
+        switch: sw,
       })
     })
 

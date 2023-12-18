@@ -1,26 +1,29 @@
 import process from 'node:process'
-import { log } from 'node:console'
 import { $ } from 'zx'
 import type { branchTypes } from './types'
 
 export async function getAllBranches(remote = false) {
   return new Promise<branchTypes[]>((resolve) => {
-    const child = $.spawn('git', ['branch', '-a', '--format', '"%(refname:short)"'], {
+    const child = $.spawn('git', ['branch', '-a'], {
       cwd: process.cwd(),
     })
 
     child.stdout.on('data', (data) => {
-      log(data.toString().trim().split('\n'))
-      const branches = data.toString().trim().split('\n')
-        .map((i: string) => {
-          i = i.slice(1, -1)
-          const s = i.split('/').reverse()
-          return [s[0], s[1] ?? 'local'] as branchTypes
-        })
-        .filter((i: branchTypes) => i[0] !== 'HEAD')
-        .filter((i: branchTypes) => remote ? true : i[1] === 'local')
-
-      resolve(branches)
+      const branches = (data.toString() as string).split('\n').map(i => i.trim()).filter(Boolean)
+      const remoteIndex = branches.findIndex(i => i.startsWith('remotes/'))
+      const localBranches = branches.slice(0, remoteIndex).map(i => normalizeBranch(i))
+      const remoteBranches = remote ? branches.slice(remoteIndex).map(i => normalizeBranch(i, true)) : []
+      resolve([...localBranches, ...remoteBranches].filter(i => !i[0].includes('HEAD ->')))
     })
   })
+}
+
+function normalizeBranch(branch: string, isRemote = false): branchTypes {
+  if (isRemote) {
+    const [remoteTag, remoteName, ...branchName] = branch.split('/')
+    return [branchName.join('/'), remoteName, remoteTag]
+  }
+  else {
+    return [branch, 'local', 'local']
+  }
 }
