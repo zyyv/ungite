@@ -56,7 +56,8 @@ export async function branchUI(options: BranchUIOptions) {
     return process.exit(0)
 
   if (realResult.length === 1) {
-    const branchMeta = realResult[0]
+    const selectedBranch = realResult[0]
+    const branchMeta = [...selectedBranch]
     branchMeta[1] = branchMeta[1] === 'local' ? '' : branchMeta[1]
     branchMeta[2] = branchMeta[2] === 'local' ? '' : branchMeta[2]
     const aimBranch = branchMeta.filter(Boolean).reverse().join('/')
@@ -92,12 +93,12 @@ export async function branchUI(options: BranchUIOptions) {
         }
 
         if (deleteConfirm) {
-          const isLocalBranch = branchMeta[2] === 'local'
+          const isLocalBranch = selectedBranch[2] === 'local'
           if (isLocalBranch)
             await $`git branch -d ${aimBranch}`
 
           else
-            await $`git push ${branchMeta[1]} --delete ${branchMeta[0]}`
+            await $`git push ${selectedBranch[1]} --delete ${selectedBranch[0]}`
         }
 
         return process.exit(0)
