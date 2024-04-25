@@ -56,8 +56,7 @@ export async function branchUI(options: BranchUIOptions) {
     return process.exit(0)
 
   if (realResult.length === 1) {
-    const selectedBranch = realResult[0]
-    const branchMeta = [...selectedBranch] as branchTypes
+    const branchMeta = realResult[0] as branchTypes
     const aimBranch = getAimBranch(branchMeta)
 
     if (options.switch) {

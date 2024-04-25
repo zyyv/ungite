@@ -44,7 +44,8 @@ export async function deleteBranches(metas: branchTypes[]) {
 }
 
 export function getAimBranch(meta: branchTypes) {
-  meta[1] = meta[1] === 'local' ? '' : meta[1]
-  meta[2] = meta[2] === 'local' ? '' : meta[2]
-  return meta.filter(Boolean).reverse().join('/')
+  const arr = [...meta]
+  arr[1] = arr[1] === 'local' ? '' : arr[1]
+  arr[2] = arr[2] === 'local' ? '' : arr[2]
+  return arr.filter(Boolean).reverse().join('/')
 }
