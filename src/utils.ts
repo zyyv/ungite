@@ -27,3 +27,24 @@ function normalizeBranch(branch: string, isRemote = false): branchTypes {
     return [branch, 'local', 'local']
   }
 }
+
+export async function deleteBranch(meta: branchTypes) {
+  const [name, remote, type] = meta
+  const isLocal = type === 'local'
+  if (isLocal)
+    await $`git branch -d ${getAimBranch(meta)}`
+
+  else
+    await $`git push ${remote} --delete ${name}`
+}
+
+export async function deleteBranches(metas: branchTypes[]) {
+  for (const meta of metas)
+    await deleteBranch(meta)
+}
+
+export function getAimBranch(meta: branchTypes) {
+  meta[1] = meta[1] === 'local' ? '' : meta[1]
+  meta[2] = meta[2] === 'local' ? '' : meta[2]
+  return meta.filter(Boolean).reverse().join('/')
+}

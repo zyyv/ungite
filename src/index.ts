@@ -9,12 +9,12 @@ startCli().catch(consola.error)
 async function startCli(cwd = process.cwd()) {
   const cli = cac('ungite')
 
-  cli.option('-d, --debug', 'Debug mode')
+  // cli.option('-d, --debug', 'Debug mode')
 
   cli.command('b', 'List of branchs')
     .option('-r, --remote', 'Include remote branchs')
     .option('-f, --filter <filter>', 'Filter branchs by name')
-    .option('-del, --delete', 'Delete branchs')
+    .option('-d, --delete', 'Delete branchs')
     .option('-s, --switch', 'Switch branchs')
     .action((opt) => {
       const { remote, filter, delete: del, switch: sw } = opt

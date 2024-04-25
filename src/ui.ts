@@ -1,7 +1,8 @@
 import process from 'node:process'
 import { cancel, confirm, isCancel, multiselect, select } from '@clack/prompts'
 import { $, chalk } from 'zx'
-import { getAllBranches } from './utils'
+import { deleteBranch, deleteBranches, getAimBranch, getAllBranches } from './utils'
+import type { branchTypes } from './types'
 
 interface BranchUIOptions {
   cwd?: string
@@ -12,11 +13,10 @@ interface BranchUIOptions {
 }
 
 export async function branchUI(options: BranchUIOptions) {
-  const { remote = false, filter } = options
-  let branches = await getAllBranches(remote)
+  let branches = await getAllBranches(options.remote ?? false)
 
-  if (filter) {
-    const reg = new RegExp(filter ?? '', 'i')
+  if (options.filter) {
+    const reg = new RegExp(options.filter ?? '', 'i')
     branches = branches.filter(i => reg.test(i[0]))
   }
 
@@ -57,13 +57,17 @@ export async function branchUI(options: BranchUIOptions) {
 
   if (realResult.length === 1) {
     const selectedBranch = realResult[0]
-    const branchMeta = [...selectedBranch]
-    branchMeta[1] = branchMeta[1] === 'local' ? '' : branchMeta[1]
-    branchMeta[2] = branchMeta[2] === 'local' ? '' : branchMeta[2]
-    const aimBranch = branchMeta.filter(Boolean).reverse().join('/')
+    const branchMeta = [...selectedBranch] as branchTypes
+    const aimBranch = getAimBranch(branchMeta)
+
     if (options.switch) {
       await $`git checkout ${aimBranch}`
     }
+
+    else if (options.delete) {
+      await deleteBranch(branchMeta)
+    }
+    // TODO options.delete
     else {
       const operation = await select({
         message: `How do you want to operate the ${chalk.red(aimBranch)} branch?`,
@@ -71,6 +75,7 @@ export async function branchUI(options: BranchUIOptions) {
           { value: 'switch', label: 'Switch' },
           { value: 'delete', label: 'Delete', hint: '⚠️ Danger, please pay attention to your operation!' },
         ],
+        initialValue: 'delete',
       })
 
       if (isCancel(operation)) {
@@ -78,31 +83,55 @@ export async function branchUI(options: BranchUIOptions) {
         return process.exit(0)
       }
 
-      if (operation === 'switch') {
-        await $`git checkout ${aimBranch}`
-      }
-      else if (operation === 'delete') {
-        const deleteConfirm = await confirm({
-          message: `Delete branch ${aimBranch}?`,
-          initialValue: true,
-        })
+      if (operation === 'switch')
+        await handleSwitch(branchMeta)
 
-        if (isCancel(deleteConfirm)) {
-          cancel('Ungite Operation cancelled.')
-          return process.exit(0)
-        }
-
-        if (deleteConfirm) {
-          const isLocalBranch = selectedBranch[2] === 'local'
-          if (isLocalBranch)
-            await $`git branch -d ${aimBranch}`
-
-          else
-            await $`git push ${selectedBranch[1]} --delete ${selectedBranch[0]}`
-        }
-
-        return process.exit(0)
-      }
+      else if (operation === 'delete')
+        await handleDelete(branchMeta)
     }
   }
+  // multi select
+  else {
+    if (options.delete)
+      return await deleteBranches(realResult)
+
+    const operation = await select({
+      message: `How do you want to operate those branchs?`,
+      options: [
+        { value: 'delete', label: 'Delete', hint: '⚠️ Danger, please pay attention to your operation!' },
+      ],
+      initialValue: 'delete',
+    })
+
+    if (isCancel(operation)) {
+      cancel('Ungite Operation cancelled.')
+      return process.exit(0)
+    }
+
+    if (operation === 'delete')
+      await deleteBranches(realResult)
+  }
+}
+
+async function handleSwitch(meta: branchTypes) {
+  await $`git checkout ${getAimBranch(meta)}`
+}
+
+async function handleDelete(meta: branchTypes) {
+  const aimBranch = getAimBranch(meta)
+
+  const deleteConfirm = await confirm({
+    message: `Delete branch ${aimBranch}?`,
+    initialValue: true,
+  })
+
+  if (isCancel(deleteConfirm)) {
+    cancel('Ungite Operation cancelled.')
+    return process.exit(0)
+  }
+
+  if (deleteConfirm)
+    await deleteBranch(meta)
+
+  return process.exit(0)
 }
