@@ -32,7 +32,7 @@ export async function deleteBranch(meta: branchTypes) {
   const [name, remote, type] = meta
   const isLocal = type === 'local'
   if (isLocal)
-    await $`git branch -d ${getAimBranch(meta)}`
+    await $`git branch -D ${getAimBranch(meta)}`
 
   else
     await $`git push ${remote} --delete ${name}`
