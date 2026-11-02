@@ -3,6 +3,7 @@ import consola from 'consola'
 import cac from 'cac'
 import { version } from '../package.json'
 import { branchUI } from './ui'
+import { remoteUI } from './remote'
 
 startCli().catch(consola.error)
 
@@ -18,7 +19,7 @@ async function startCli(cwd = process.cwd()) {
     .option('-s, --switch', 'Switch branchs')
     .action((opt) => {
       const { remote, filter, delete: del, switch: sw } = opt
-      branchUI({
+      return branchUI({
         cwd,
         remote,
         filter,
@@ -27,7 +28,12 @@ async function startCli(cwd = process.cwd()) {
       })
     })
 
+  cli.command('r', 'List remotes')
+    .option('-d, --delete', 'Delete remotes (origin is protected)')
+    .action(opt => remoteUI({ cwd, delete: opt.delete }))
+
   cli.help()
   cli.version(version)
-  cli.parse()
+  cli.parse(process.argv, { run: false })
+  await cli.runMatchedCommand()
 }
